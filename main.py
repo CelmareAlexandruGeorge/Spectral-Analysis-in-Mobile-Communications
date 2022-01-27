@@ -33,8 +33,7 @@ while True:
     # nr_esant_sec = int(float(input()))
     pas = fft_size * canal_GSM / (frecventa_stop - frecventa_start)  # atunci cand voi parcurge din 200 in 200 kHz
 
-    prima_decimala = int((pas - math.floor(
-        pas)) * 10)  # Aproximez prin lipsa, pentru ca asta ma va obliga sa cresc banda analizata, nu sa o scad si sa imi strice analiza
+    prima_decimala = int((pas - math.floor(pas)) * 10)  # Aproximez prin lipsa, pentru ca asta ma va obliga sa cresc banda analizata, nu sa o scad si sa imi strice analiza
 
     if prima_decimala == 0:  # consider ca daca prima zecimala este 0, eroare ce va aparea va fi neglijabila
         pas = round(pas)
@@ -42,8 +41,7 @@ while True:
 
     else:
         banda_impusa = fft_size * canal_GSM / round(pas) / 1e6
-        print("Modificati frecventa de start si cea de stop astfel incat sa aveti banda analizata de: " + str(
-            banda_impusa)[:4] + " MHz")
+        print("Modificati frecventa de start si cea de stop astfel incat sa aveti banda analizata de: " + str(banda_impusa)[:4] + " MHz")
         continue
 
     print("Introduceti numele fisierului in care sunt datele de analizat")
@@ -63,8 +61,7 @@ while True:
             matrice_perioade[i][j] = continut[k]
             k = k + 1
 
-    anvelopa_maxime = [max(i) for i in np.transpose(
-        matrice_perioade)]  # Calcularea maximelor pentru a gasi anvelopa care ne va ajuta sa vedem mai usor canalele GSM
+    anvelopa_maxime = [max(i) for i in np.transpose(matrice_perioade)]  # Calcularea maximelor pentru a gasi anvelopa care ne va ajuta sa vedem mai usor canalele GSM
 
     ########### Determinare prag zgomot
     # Stim ca in afara benzii de 925-960 nu se emite nimic, deci e zgomot
@@ -88,8 +85,7 @@ while True:
     # pe a treia daca sunt GSM sau nu
     # pe a patra va fi un prag ce va folosi la identificarea nivelului mediu de semnal pe canal
 
-    nr_esant_supliment = int(fft_size * 80e3 / (
-                frecventa_stop - frecventa_start))  # consideram ca 80kHz sunt suficienti pentru a face media frecv centrale
+    nr_esant_supliment = int(fft_size * 80e3 / (frecventa_stop - frecventa_start))  # consideram ca 80kHz sunt suficienti pentru a face media frecv centrale
     temp_par = np.zeros(nr_esant_supliment)
     temp_imp = np.zeros(nr_esant_supliment)
 
@@ -100,10 +96,7 @@ while True:
 
         matrice_valori_frecvente_centrale[0][i] = np.mean(temp_par)
         matrice_valori_frecvente_centrale[1][i] = min(temp_imp)  # cel care este cu 100kHz in fata matrice_valori_frecv_centrale[0]
-
-        matrice_valori_frecvente_centrale[3][i] = int(
-            nivel_zgomot_max + (matrice_valori_frecvente_centrale[0][i] - nivel_zgomot_max) / 4)
-
+        matrice_valori_frecvente_centrale[3][i] = int(nivel_zgomot_max + (matrice_valori_frecvente_centrale[0][i] - nivel_zgomot_max) / 4)
         esantion_pas += pas
         esantion_pas_imp += pas
 
@@ -177,8 +170,7 @@ while True:
                     int(nr_esant_supliment / 2)):  # pentru diferentierea tipurilor de canale, media pe mai multe esantioane era eficienta. pentru nivelul de semnal de pe o anumita frecv trebuie sa fim mai rigurosi
                 temp[k] = matrice_perioade[j][c * pas + k]
 
-            if matrice_valori_frecvente_centrale[0][c] < max(
-                    banda_frecvente_zgomot_max):  # daca e zgomot permanent (Evit cazul in care pe o frecv nu se emite temporar si am zgomot)
+            if matrice_valori_frecvente_centrale[0][c] < max(banda_frecvente_zgomot_max):  # daca e zgomot permanent (Evit cazul in care pe o frecv nu se emite temporar si am zgomot)
                 valori_medii[0][c] = np.mean(temp)
                 break  # daca stiu sigur ca e zgomot, imi e de ajuns sa verific o singura linie, nu pe toate
 
@@ -213,6 +205,7 @@ while True:
                 print("La frecventa " + str((frecventa_start + i * 200e3) / 1e6)[:5] + " MHz, avem GSM - TRAFIC si nivel mediu de semnal: " + str((valori_medii[0][i]))[:5] + " dB")
         elif matrice_valori_frecvente_centrale[2][i] == 1:
             print("La frecventa " + str((frecventa_start + i * 200e3) / 1e6)[:5] + " MHz, avem zgomot si nivel mediu de semnal: " + str((valori_medii[0][i]))[:5] + " dB")
+
     frecvente_centrale = np.linspace(frecventa_start, frecventa_stop, int(fft_size / pas))
     axa_frecvente = np.linspace(frecventa_start, frecventa_stop, fft_size)
 
